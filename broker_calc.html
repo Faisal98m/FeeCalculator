@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broker's Advanced Cost Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+
+    <div class="container mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-900">Broker's Advanced Calculator</h1>
+            <p class="text-slate-600 mt-1">Analyse a client's statement with a detailed card-type breakdown.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-5 gap-8">
+
+            <!-- Left Side: Input Form -->
+            <div class="lg:col-span-3 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-semibold text-slate-800 border-b border-slate-200 pb-3 mb-6">Client's Statement Details</h2>
+                <form id="broker-form" class="space-y-5">
+
+                    <!-- Core Metrics -->
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div>
+                            <label for="turnover" class="block text-sm font-medium text-slate-700">Total Monthly Turnover (£)</label>
+                            <input type="number" id="turnover" placeholder="5000" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label for="atv" class="block text-sm font-medium text-slate-700">Average Transaction Value (£)</label>
+                            <input type="number" id="atv" placeholder="25" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+                    <!-- NEW: Card Type Breakdown Section -->
+                    <div>
+                        <h3 class="text-md font-semibold text-slate-700">Card Type Breakdown & Rates</h3>
+                        <div class="mt-2 p-4 border border-slate-200 rounded-lg space-y-4">
+                            <!-- Turnover Split -->
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label for="debit-turnover-percent" class="block text-xs font-medium text-slate-600">Debit Turnover (%)</label>
+                                    <input type="number" id="debit-turnover-percent" placeholder="60" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm text-sm">
+                                </div>
+                                <div>
+                                    <label for="credit-turnover-percent" class="block text-xs font-medium text-slate-600">Credit Turnover (%)</label>
+                                    <input type="number" id="credit-turnover-percent" placeholder="30" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm text-sm">
+                                </div>
+                                <div>
+                                    <label for="business-turnover-percent" class="block text-xs font-medium text-slate-600">Business Turnover (%)</label>
+                                    <input type="number" id="business-turnover-percent" placeholder="10" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm text-sm">
+                                </div>
+                            </div>
+                             <div id="percentage-warning" class="hidden text-xs text-center text-red-600 font-semibold p-2 bg-red-50 rounded-md">
+                                The turnover percentages must add up to 100%.
+                            </div>
+                            <!-- Rates per Card Type -->
+                            <div class="grid grid-cols-3 gap-4 pt-2">
+                                <div>
+                                    <label for="debit-rate" class="block text-xs font-medium text-slate-600">Debit Rate (%)</label>
+                                    <input type="number" step="0.01" id="debit-rate" placeholder="0.45" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm text-sm">
+                                </div>
+                                <div>
+                                    <label for="credit-rate" class="block text-xs font-medium text-slate-600">Credit Rate (%)</label>
+                                    <input type="number" step="0.01" id="credit-rate" placeholder="0.85" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm text-sm">
+                                </div>
+                                <div>
+                                    <label for="business-rate" class="block text-xs font-medium text-slate-600">Business Rate (%)</label>
+                                    <input type="number" step="0.01" id="business-rate" placeholder="1.25" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm text-sm">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Per Transaction Fee -->
+                     <div>
+                        <label for="per-transaction-fee" class="block text-sm font-medium text-slate-700">Per-Transaction Fee (in pence)</label>
+                        <input type="number" step="0.1" id="per-transaction-fee" placeholder="1.5" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+
+                    <!-- Fixed Monthly Fees Section -->
+                    <div>
+                        <h3 class="text-md font-semibold text-slate-700">Fixed Monthly Fees</h3>
+                        <div class="mt-2 p-4 border border-slate-200 rounded-lg grid sm:grid-cols-2 gap-5">
+                            <input type="number" id="terminal-rental" placeholder="Terminal Rental (£)" class="block w-full rounded-md border-slate-300 shadow-sm">
+                            <input type="number" id="pci-fee" placeholder="PCI Compliance Fee (£)" class="block w-full rounded-md border-slate-300 shadow-sm">
+                            <input type="number" id="mmsc" placeholder="MMSC (£)" class="block w-full rounded-md border-slate-300 shadow-sm">
+                            <input type="number" id="other-fees" placeholder="Other Fees (£)" class="block w-full rounded-md border-slate-300 shadow-sm">
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4">
+                         <button type="button" id="reset-button" class="w-full justify-center inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            Reset Form
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Right Side: Output / Analysis -->
+            <div class="lg:col-span-2">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 sticky top-8">
+                    <h2 class="text-xl font-semibold text-slate-800 border-b border-slate-200 pb-3 mb-6">Cost Analysis</h2>
+                    <div class="space-y-4">
+                        <!-- Key Metric: Total Cost -->
+                        <div class="bg-indigo-600 text-white p-4 rounded-lg">
+                            <p class="text-sm font-medium text-indigo-200">Total Estimated Monthly Cost</p>
+                            <p id="total-cost" class="text-4xl font-bold mt-1">£0.00</p>
+                        </div>
+                        
+                        <!-- Key Metric: Effective Rate -->
+                        <div class="bg-slate-100 p-4 rounded-lg">
+                            <p class="text-sm font-medium text-slate-600">Effective Rate</p>
+                            <p id="effective-rate" class="text-3xl font-bold text-slate-800 mt-1">0.00%</p>
+                        </div>
+
+                        <!-- Cost Breakdown -->
+                        <div class="pt-4">
+                             <h3 class="text-md font-semibold text-slate-700 mb-2">Cost Breakdown</h3>
+                             <dl class="space-y-2 text-sm">
+                                <div class="flex justify-between items-center bg-slate-50 p-2 rounded">
+                                    <dt class="text-slate-600">Number of Transactions:</dt>
+                                    <dd id="num-transactions" class="font-semibold text-slate-900">0</dd>
+                                </div>
+                                <div class="flex justify-between items-center bg-slate-50 p-2 rounded">
+                                    <dt class="text-slate-600">Total Rate Cost:</dt>
+                                    <dd id="rate-cost" class="font-semibold text-slate-900">£0.00</dd>
+                                </div>
+                                <div class="flex justify-between items-center bg-slate-50 p-2 rounded">
+                                    <dt class="text-slate-600">Transaction Fee Cost:</dt>
+                                    <dd id="transaction-fee-cost" class="font-semibold text-slate-900">£0.00</dd>
+                                </div>
+                                <div class="flex justify-between items-center bg-slate-50 p-2 rounded">
+                                    <dt class="text-slate-600">Total Fixed Fees:</dt>
+                                    <dd id="fixed-fees" class="font-semibold text-slate-900">£0.00</dd>
+                                </div>
+                             </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Element References ---
+        const form = document.getElementById('broker-form');
+        const resetButton = document.getElementById('reset-button');
+        
+        // Inputs
+        const turnoverInput = document.getElementById('turnover');
+        const atvInput = document.getElementById('atv');
+        const perTransactionFeeInput = document.getElementById('per-transaction-fee');
+        const terminalRentalInput = document.getElementById('terminal-rental');
+        const pciFeeInput = document.getElementById('pci-fee');
+        const mmscInput = document.getElementById('mmsc');
+        const otherFeesInput = document.getElementById('other-fees');
+        
+        // NEW Card Type Inputs
+        const debitTurnoverPercentInput = document.getElementById('debit-turnover-percent');
+        const creditTurnoverPercentInput = document.getElementById('credit-turnover-percent');
+        const businessTurnoverPercentInput = document.getElementById('business-turnover-percent');
+        const debitRateInput = document.getElementById('debit-rate');
+        const creditRateInput = document.getElementById('credit-rate');
+        const businessRateInput = document.getElementById('business-rate');
+        const percentageWarningEl = document.getElementById('percentage-warning');
+
+        // Outputs
+        const totalCostEl = document.getElementById('total-cost');
+        const effectiveRateEl = document.getElementById('effective-rate');
+        const numTransactionsEl = document.getElementById('num-transactions');
+        const rateCostEl = document.getElementById('rate-cost');
+        const transactionFeeCostEl = document.getElementById('transaction-fee-cost');
+        const fixedFeesEl = document.getElementById('fixed-fees');
+
+        // --- Calculation Logic ---
+        function calculateCosts() {
+            // Get values from inputs, default to 0 if empty
+            const turnover = parseFloat(turnoverInput.value) || 0;
+            const atv = parseFloat(atvInput.value) || 0;
+            const perTransactionFeePence = parseFloat(perTransactionFeeInput.value) || 0;
+            const terminalRental = parseFloat(terminalRentalInput.value) || 0;
+            const pciFee = parseFloat(pciFeeInput.value) || 0;
+            const mmsc = parseFloat(mmscInput.value) || 0;
+            const otherFees = parseFloat(otherFeesInput.value) || 0;
+
+            // Get card breakdown values
+            const debitTurnoverPercent = parseFloat(debitTurnoverPercentInput.value) || 0;
+            const creditTurnoverPercent = parseFloat(creditTurnoverPercentInput.value) || 0;
+            const businessTurnoverPercent = parseFloat(businessTurnoverPercentInput.value) || 0;
+            const debitRate = parseFloat(debitRateInput.value) || 0;
+            const creditRate = parseFloat(creditRateInput.value) || 0;
+            const businessRate = parseFloat(businessRateInput.value) || 0;
+
+            // --- Validation ---
+            const totalPercentage = debitTurnoverPercent + creditTurnoverPercent + businessTurnoverPercent;
+            if (Math.round(totalPercentage) !== 100 && totalPercentage > 0) {
+                percentageWarningEl.classList.remove('hidden');
+            } else {
+                percentageWarningEl.classList.add('hidden');
+            }
+
+            // --- Core Calculations ---
+            
+            // 1. Calculate number of transactions
+            const numTransactions = atv > 0 ? Math.round(turnover / atv) : 0;
+
+            // 2. Calculate variable costs
+            const debitTurnoverValue = turnover * (debitTurnoverPercent / 100);
+            const creditTurnoverValue = turnover * (creditTurnoverPercent / 100);
+            const businessTurnoverValue = turnover * (businessTurnoverPercent / 100);
+            
+            const debitCost = debitTurnoverValue * (debitRate / 100);
+            const creditCost = creditTurnoverValue * (creditRate / 100);
+            const businessCost = businessTurnoverValue * (businessRate / 100);
+
+            const totalRateCost = debitCost + creditCost + businessCost;
+            const transactionFeeCost = numTransactions * (perTransactionFeePence / 100);
+            
+            // 3. Calculate total fixed fees
+            const totalFixedFees = terminalRental + pciFee + otherFees;
+
+            // 4. Calculate total cost before MMSC
+            let totalCost = totalRateCost + transactionFeeCost + totalFixedFees;
+
+            // 5. Apply Minimum Monthly Service Charge (MMSC)
+            if ((totalRateCost + transactionFeeCost) < mmsc) {
+                totalCost = mmsc + totalFixedFees;
+            }
+
+            // 6. Calculate the final effective rate
+            const effectiveRate = turnover > 0 ? (totalCost / turnover) * 100 : 0;
+
+            // --- Update UI ---
+            totalCostEl.textContent = `£${totalCost.toFixed(2)}`;
+            effectiveRateEl.textContent = `${effectiveRate.toFixed(2)}%`;
+            numTransactionsEl.textContent = numTransactions.toLocaleString();
+            rateCostEl.textContent = `£${totalRateCost.toFixed(2)}`;
+            transactionFeeCostEl.textContent = `£${transactionFeeCost.toFixed(2)}`;
+            fixedFeesEl.textContent = `£${totalFixedFees.toFixed(2)}`;
+        }
+
+        // --- Event Listeners ---
+        form.addEventListener('input', calculateCosts);
+        
+        resetButton.addEventListener('click', () => {
+            form.reset();
+            calculateCosts(); // Recalculate to set outputs to zero
+        });
+
+        // Initial calculation on page load
+        document.addEventListener('DOMContentLoaded', calculateCosts);
+    </script>
+</body>
+</html>
